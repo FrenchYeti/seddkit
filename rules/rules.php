@@ -8,6 +8,18 @@ return array(
             'msg'=>'Check the value versus the expected format and the context of use',
             'title'=>'Unchecked variable : you try to use the variable %s without sanitize it.'
         ),
+        'TAINT_CHECKING_SERIALIZE'=>array(
+            'link'=>'',
+            'owaspt10'=>'I/O Control',
+            'msg'=>'TODO',
+            'title'=>'Unsecure serialize : you try to serialize a data from input %s without sanitize it.'
+        ),
+        'TAINT_CHECKING_UNSERIALIZE'=>array(
+            'link'=>'',
+            'owaspt10'=>'I/O Control',
+            'msg'=>'Check the value versus the expected format and the context of use',
+            'title'=>'Unsecure unserialize : you try to unserialize the variable %s without sanitize it, please check if the string is the expected class.'
+        ),
         // Default white list of allowed HTTP method 
         'HTTP_METHODS'=>'GET,POST,PUT,DELETE', 
         'HTTP_TRACE_METHOD'=>array(
@@ -53,25 +65,27 @@ return array(
             'link'=>'',
             'owaspt10'=>'',
             'msg'=>'[OPEN_REMOTE_FILE] allow_url_fopen should be disallow in order to prevent remote file inclusion.',
-            'title'=>''
+            'title'=>'The directive <i>allow_url_fopen</i> should be turn off.'
         ),
         'INCLUDE_REMOTE_FILE'=>array(
             'link'=>'',
             'owaspt10'=>'Configuration',
             'msg'=>'[INCLUDE_REMOTE_FILE] allow_url_include should be disallow in order to prevent remote file inclusion.',
-            
+            'title'=>'The directive <i>allow_url_include</i> should be turn off.'
         ),
         /* ========== Session Rules ============ */
         // gc_collect_cycles,
         'MYSQL_EXTENSION'=>array(
             'link'=>'',
             'owaspt10'=>'Configuration, Injection',
+            'title'=>'The MySQL PHP extension is deprecate and should not be used.',
             'msg'=>'[MYSQL] The MySQL PHP extension is deprecate and should not be used.',
         ),
         'MYSQL_QUERY'=>array(
             'link'=>'',
+            'title'=>'The function mysql_query() should not be used.',
             'owaspt10'=>'Configuration, Injection',
-            'msg'=>'[MYSQL_QUERY] The function mysql_query() is deprecate and should not be used.',
+            'msg'=>'[MYSQL_QUERY] The function mysql_query() should not be use because the MySQL Extension is deprecate.',
         ),
         'REQUEST_VAR_IMPORT'=>array(
             'link'=>'',
