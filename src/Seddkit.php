@@ -26,6 +26,8 @@ require_once(__DIR__.'/TaintedScalar.php');
 */
 class Seddkit 
 {    
+    const STRING_CONTEXT = 1;
+
     //const SEDDK_YAML = 1;
     
     //const SEDDK_JSON = 2;
@@ -55,6 +57,8 @@ class Seddkit
         'CONFIGURATION_CHECKING'=>true,
         // Display err message 
         'DISPLAY_ERR'=>true,
+        // If TRUE, append the State to the SE message
+        'PRINT_STATE'=>true,
         // =========== Context rules ===============
         // Default white list of allowed HTTP method 
         'HTTP_METHODS'=>'GET,POST,PUT,DELETE', 
@@ -239,91 +243,4 @@ class Seddkit
         return isset(self::$_BYPASS[$rulename_str]);
     }
 }
-
-
-
-
-class SecurityContext
-{
-    public static function newSqlInjectionContext($vars_arr)
-    {
-    }
-    
-    public static function newRceContext($vars_arr)
-    {
-        
-    }
-}
-
-/* ****************************************************
-*                 SEDDkit function
-**************************************************** */
-
-
-// TRACE method should triggert an exception
-
-/**
-@param $cfg_filepath string Config filepath
-@param $cfg_format int Config format : SEDDK_YAML, SEDDK_JSON, SEDDK_ARRAY, SEDDK_XML
-*/
-function run($rulesfilepath_str, $cfg_filepath=null,$cfg_format=0){
-    
-    // import config file is exists
-    if(!is_null($cfg_filepath) && $cfg_format>0){
-        Seddkit::init($cfg_filepath,$cfg_format);
-    }
-    
-    Seddkit::importRules($rulesfilepath_str);
-    
-    if(Seddkit::CONFIG('CONFIGURATION_CHECKING'))
-        Seddkit::checkPhpConfiguration();
-    
-    if(Seddkit::CONFIG('GLOBALS_INPUTS'))
-        Seddkit::contaminateSuperGlobals();
-    
-    //if(Seddkit::CONFIG('DISABLE_REQUEST_SGLOBAL'))
-    //    Seddkit::disableRequestSG($_REQUEST);
-    
-    if(Seddkit::CONFIG('COOKIE_TAINTED'))
-        Seddkit::contaminate($_COOKIE);
-}
-
-
-/* **********************************************
-*           Overrided function
-************************************************ */
-function mysql_query(){
-    throw new DevelopmentSecurityException("",'MYSQL_EXTENSION');
-}
-
-function import_request_variables(){
-    throw new DevelopmentSecurityException("",'REQUEST_VAR_IMPORT');
-}
-
-function strlen($string_str){
-    if($string_str instanceof Tainted)
-        return $string_str->lenght();
-    else
-        return \strlen($string_str);
-}
-
-/**
-* Override setcookie()
-*/
-function setcookie( $name, $value = "", $expire = 0, $path = "", $domain = "", $secure = false, $httponly = false){
-    
-    if(Seddkit::CONFIG('COOKIE_HTTP_ONLY') && $httponly===false)
-        throw new DevelopmentSecurityException("",'COOKIE_HTTP_ONLY');
-    
-    if(Seddkit::CONFIG('COOKIE_SECURE') && $secure===false)
-        throw new DevelopmentSecurityException("",'COOKIE_SECURE');
-    
-    
-    setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
-}
-
-function addListener($eventname_str, $callback, $callback_args=Observer::NO_ARGS, $subject_obj = null){
-    Observer::newListener($eventname_str, $callback, $callback_args, $subject_obj);
-}
-
 ?>
